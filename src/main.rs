@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Node<T: Clone + PartialEq> {
     data: T,
     next: Option<Rc<RefCell<Node<T>>>>,
@@ -23,22 +23,39 @@ impl<T: Clone + PartialEq> LinkedList<T> {
         self.head.is_none() || self.tail.is_none()
     }
 
+    pub fn find(&self, data: T) -> Option<Rc<RefCell<Node<T>>>> {
+        if self.is_empty() {
+            return None
+        }
+
+        let mut cur: Option<Rc<RefCell<Node<T>>>> = self.head.clone();
+        while let Some(n) = cur {
+            let item = n.borrow();
+            if item.data != data {
+                cur = item.clone().next;
+            } else {
+                return Some(n.clone());
+            }
+        }
+
+        None
+    }
+
     pub fn push(&mut self, data: T) {
-        let nn = Rc::new(RefCell::new(Node {
+        let node = Rc::new(RefCell::new(Node {
             data: data,
             next: None,
         }));
 
         if self.head.is_none() {
-            self.head = Some(Rc::clone(&nn));
+            self.head = Some(Rc::clone(&node));
         }
 
         if !self.tail.is_none() {
-            let x = self.tail.as_mut().unwrap();
-            x.borrow_mut().next = Some(Rc::clone(&nn));
+            self.tail.as_mut().unwrap().borrow_mut().next = Some(Rc::clone(&node));
         }
 
-        self.tail = Some(Rc::clone(&nn));
+        self.tail = Some(Rc::clone(&node));
     }
 
     pub fn collect(&self) -> Option<Vec<T>> {
@@ -97,21 +114,55 @@ impl<T: Clone + PartialEq> LinkedList<T> {
 }
 
 #[cfg(test)]
-#[test]
-fn test_linked_list_push_collect() {
-    let mut list = LinkedList::<i32>::new();
-    list.push(1);
-    list.push(2);
-    list.push(2);
-    list.push(3);
-    list.push(4);
-    list.remove(2);
-    list.remove(4);
-    list.remove(5);
-    list.push(5);
-    assert_eq!(list.collect().unwrap(), vec![1, 2, 3, 5]);
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_empty() {
+        let mut list = LinkedList::<i32>::new();
+
+        assert!(list.is_empty());
+
+        list.push(2);
+
+        assert!(!list.is_empty())
+    }
+
+    #[test]
+    fn test_linked_list_find() {
+        let mut list = LinkedList::<i32>::new();
+
+        list.push(1);
+        list.push(2);
+
+        assert_eq!(list.find(1).unwrap().borrow().data, 1);
+        assert_eq!(list.find(2).unwrap().borrow().data, 2);
+        assert_eq!(list.find(3), None);
+    }
+
+    #[test]
+    fn test_linked_list_push_collect() {
+        let mut list = LinkedList::<i32>::new();
+
+        list.push(1);
+        list.push(2);
+        list.push(2);
+        list.push(3);
+        list.push(4);
+        list.remove(2);
+        list.remove(4);
+        list.remove(5);
+        list.push(5);
+
+        assert_eq!(list.collect().unwrap(), vec![1, 2, 3, 5]);
+    }
 }
 
 fn main() {
+    let numbers = vec![1, 2, 3, 4,5, 6];
+    for i in numbers.iter() {
+        println!("{}", i);
+    }
+
     println!("Hello, world!");
 }
