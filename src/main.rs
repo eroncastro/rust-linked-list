@@ -28,7 +28,7 @@ impl<T: Clone + PartialEq> LinkedList<T> {
             return None
         }
 
-        let mut cur: Option<Rc<RefCell<Node<T>>>> = self.head.clone();
+        let mut cur = self.head.clone();
         while let Some(n) = cur {
             let item = n.borrow();
             if item.data != data {
@@ -80,10 +80,10 @@ impl<T: Clone + PartialEq> LinkedList<T> {
             return;
         }
 
-        let mut prev: Option<Rc<RefCell<Node<T>>>> = None;
-        let mut cur: Option<Rc<RefCell<Node<T>>>> = self.head.clone();
+        let mut prev = None;
+        let mut cur = self.head.clone();
         while let Some(n) = cur {
-            let item = n.borrow();
+            let item: std::cell::Ref<'_, Node<T>> = n.borrow();
             if item.data != data {
                 prev = Some(n.clone());
                 cur = item.clone().next;
