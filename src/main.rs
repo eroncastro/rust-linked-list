@@ -20,7 +20,7 @@ impl<T: Clone + PartialEq> LinkedList<T> {
     }
 
     pub fn is_empty(&self) -> bool {
-        self.head.is_none() || self.tail.is_none()
+        self.head.is_none() && self.tail.is_none()
     }
 
     pub fn find(&self, data: T) -> Option<Rc<RefCell<Node<T>>>> {
