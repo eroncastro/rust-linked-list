@@ -48,14 +48,14 @@ impl<T: Clone + PartialEq> LinkedList<T> {
         }));
 
         if self.head.is_none() {
-            self.head = Some(Rc::clone(&node));
+            self.head = Some(node.clone());
         }
 
         if !self.tail.is_none() {
-            self.tail.as_mut().unwrap().borrow_mut().next = Some(Rc::clone(&node));
+            self.tail.as_mut().unwrap().borrow_mut().next = Some(node.clone());
         }
 
-        self.tail = Some(Rc::clone(&node));
+        self.tail = Some(node.clone());
     }
 
     pub fn collect(&self) -> Option<Vec<T>> {
