@@ -25,7 +25,7 @@ impl<T: Clone + PartialEq> LinkedList<T> {
 
     pub fn find(&self, data: T) -> Option<Rc<RefCell<Node<T>>>> {
         if self.is_empty() {
-            return None
+            return None;
         }
 
         let mut cur = self.head.clone();
@@ -159,7 +159,7 @@ mod tests {
 }
 
 fn main() {
-    let numbers = vec![1, 2, 3, 4,5, 6];
+    let numbers = vec![1, 2, 3, 4, 5, 6];
     for i in numbers.iter() {
         println!("{}", i);
     }
